@@ -43,6 +43,10 @@ class ISO4217::Currency
       end
     end
 
+    def exchange_with(from, to_currency)
+      exchange(from.cents, from.currency.to_s, to_currency)
+    end
+
     @@singleton = ExchangeBank.new
   end
 end
