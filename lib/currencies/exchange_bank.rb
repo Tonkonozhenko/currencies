@@ -44,6 +44,7 @@ class ISO4217::Currency
     end
 
     def exchange_with(from, to_currency)
+      to_currency = to_currency.to_s unless to_currency.is_a? String
       exchange(from.cents, from.currency.to_s, to_currency)
     end
 
