@@ -27,20 +27,22 @@ class ISO4217::Currency
       currency1.upcase == currency2.upcase
     end
 
-    def exchange(cents, from_currency, to_currency)
-      rate = get_rate(from_currency, to_currency)
-      if rate
-        (cents * rate).floor
-      else
-        from_currency = ISO4217::Currency.from_code(from_currency)
-        to_currency = ISO4217::Currency.from_code(to_currency)
-                
-        if from_currency && to_currency && from_currency.exchange_rate && to_currency.exchange_rate && (from_currency.exchange_currency == to_currency.exchange_currency)
-          ((cents * from_currency.exchange_rate) / to_currency.exchange_rate).floor
+    def exchange(cents, from, to)
+      rate = get_rate(from, to)
+      res =
+        if rate
+          (cents * rate).floor
         else
-          raise Money::UnknownRate, "No conversion rate known for '#{from_currency}' -> '#{to_currency}'"
+          from_currency = ISO4217::Currency.from_code(from)
+          to_currency = ISO4217::Currency.from_code(to)
+
+          if from_currency && to_currency && from_currency.exchange_rate && to_currency.exchange_rate && (from_currency.exchange_currency == to_currency.exchange_currency)
+            ((cents * from_currency.exchange_rate) / to_currency.exchange_rate).floor
+          else
+            raise Money::UnknownRate, "No conversion rate known for '#{from_currency}' -> '#{to_currency}'"
+          end
         end
-      end
+      Money.new(res, to)
     end
 
     def exchange_with(from, to_currency)
